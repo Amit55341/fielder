@@ -13,6 +13,8 @@ st.set_page_config(page_title="Fieldor Report", page_icon=":bar_chart:")
 
 # Sidebar navigation
 #st.sidebar.title("Navigation")
+st.sidebar.markdown('<center><p><h2 style="color: brown; font-family: Helvetica, sans-serif;">BOMBAY INTEGRATED SECURITY (INDIA) LTD</h2></p></center>', unsafe_allow_html=True)
+st.sidebar.image("img/logo1.png", caption="")
 page = st.sidebar.radio("Go to", [ "Users", "Settings"])
 page2 = st.sidebar.radio("Select Report Type", ["Day Report", "Night Report","Daily Visit Summary"])
 
@@ -35,6 +37,7 @@ if page == "Users":
             try:
                 if uploaded_file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
                     st.session_state.df = pd.read_excel(uploaded_file)
+                    #st.write(st.session_state.df)
                 else:
                     st.session_state.df = pd.read_csv(uploaded_file, encoding='latin-1')  # Use a suitable encoding
 
@@ -45,34 +48,36 @@ if page == "Users":
                 #st.write(st.session_state.df.columns.to_list())
                 st.session_state.df.isna().sum()
                 # Calculate and assign Earning Differance
-                st.write(st.session_state.df.drop(["PHOTOS", "BRANCH", "REGION", "VID", "SITE ID"], axis=1, inplace=True))
+                st.write(st.session_state.df.drop(["   Photos", "   Branch", "   Region", "   View Report", "   Site ID"], axis=1, inplace=True))
                 # Convert the "VISIT DATE" column to datetime data type
-                st.session_state.df["VISIT DATE"] = pd.to_datetime(st.session_state.df["VISIT DATE"])
+                st.session_state.df["   Visit Date"] = pd.to_datetime(st.session_state.df["   Visit Date"])
                 #st.write(st.session_state.df["VISIT DATE"])
 
                 #fetch day,month,year seprate column
-                st.session_state.df["VISIT day"]=st.session_state.df["VISIT DATE"].apply(lambda x: x.day)
+                st.session_state.df["VISIT day"]=st.session_state.df["   Visit Date"].apply(lambda x: x.day)
                 #st.write(st.session_state.df["VISIT day"])
-                st.session_state.df["VISIT month"]=st.session_state.df["VISIT DATE"].apply(lambda x: x.month)
+                st.session_state.df["VISIT month"]=st.session_state.df["   Visit Date"].apply(lambda x: x.month)
                 #st.write(st.session_state.df["VISIT month"])
-                st.session_state.df["VISIT year"]=st.session_state.df["VISIT DATE"].apply(lambda x: x.year)
+                st.session_state.df["VISIT year"]=st.session_state.df["   Visit Date"].apply(lambda x: x.year)
                 #st.write(st.session_state.df["VISIT year"])
                 # Convert the "VISIT TIME" column to datetime data type
-                st.session_state.df["VISIT TIME"] = pd.to_datetime(st.session_state.df["VISIT TIME"])
+                st.session_state.df["   Visit Time"] = pd.to_datetime(st.session_state.df["   Visit Time"])
                 #st.write(st.session_state.df["VISIT TIME"])
                 #fetching houre and min a sepret column
-                st.session_state.df["VISIT HOURS"] = st.session_state.df["VISIT TIME"].apply(lambda x: x.hour if isinstance(x, pd.Timestamp) else None)
+                st.session_state.df["VISIT HOURS"] = st.session_state.df["   Visit Time"].apply(lambda x: x.hour if isinstance(x, pd.Timestamp) else None)
                # st.write(st.session_state.df["VISIT HOURS"])
                 #st.session_state.df["VISIT HOURS"] = st.write(st.session_state.df["VISIT TIME"].apply(lambda x: x.hour))
-                st.session_state.df["VISIT MIN"] = st.session_state.df["VISIT TIME"].apply(lambda x: x.minute if isinstance(x, pd.Timestamp) else None)
+                st.session_state.df["VISIT MIN"] = st.session_state.df["   Visit Time"].apply(lambda x: x.minute if isinstance(x, pd.Timestamp) else None)
                 
 
                 
 
-                st.write(st.session_state.df.drop(["VISIT DATE","VISIT TIME","CLIENT","STATE / ADDRESS"], axis=1, inplace=True))
+                st.write(st.session_state.df.drop(["   Visit Date","   Visit Time","   Client","   State"], axis=1, inplace=True))
                 
                 
                 if page2=="Day Report":
+
+                    
                     
 
                     if 'day_data' not in st.session_state:
@@ -89,10 +94,11 @@ if page == "Users":
                     if st.session_state.day_data is not None:
                            if st.session_state.cross_tab is None:
                                 #, st.session_state.day_data['CONTACT']
-                                st.session_state.cross_tab = st.session_state.cross_tab = pd.crosstab([st.session_state.day_data['CAD'], st.session_state.day_data['Branch Name'], st.session_state.day_data['OFFICER']], st.session_state.day_data['VISIT day'], margins=True)
+                                st.session_state.cross_tab = st.session_state.cross_tab = pd.crosstab([st.session_state.day_data['CAD'], st.session_state.day_data['Branch Name'], st.session_state.day_data['   Name']], st.session_state.day_data['VISIT day'], margins=True)
 
 
                     if st.button("Download"):
+                        
       
                         if st.session_state.cross_tab is not None:
                             #st.write(st.session_state.cross_tab)
@@ -131,7 +137,7 @@ if page == "Users":
                     if st.session_state.night_data is not None:
                         if st.session_state.cross_tab_night is None:
                             #, st.session_state.day_data['CONTACT']
-                            st.session_state.cross_tab_night = pd.crosstab([st.session_state.night_data['CAD'], st.session_state.night_data['Branch Name'], st.session_state.night_data['OFFICER']], st.session_state.night_data['VISIT day'], margins=True)
+                            st.session_state.cross_tab_night = pd.crosstab([st.session_state.night_data['CAD'], st.session_state.night_data['Branch Name'], st.session_state.night_data['   Name']], st.session_state.night_data['VISIT day'], margins=True)
 
                     if st.button("Download"):
       
@@ -169,7 +175,7 @@ if page == "Users":
                     if st.session_state.df is not None:
                         if st.session_state.cross_tab_daily is None:
                                 #, st.session_state.day_data['CONTACT']
-                            st.session_state.cross_tab_daily = pd.crosstab([st.session_state.df['CAD'], st.session_state.df['Branch Name'], st.session_state.df['OFFICER']], st.session_state.df['VERSION'], margins=True)
+                            st.session_state.cross_tab_daily = pd.crosstab([st.session_state.df['CAD'], st.session_state.df['Branch Name'], st.session_state.df['   Name']], st.session_state.df['   Report Type'], margins=True)
 
                     if st.button("Download"):
         
